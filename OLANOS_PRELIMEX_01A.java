@@ -34,6 +34,7 @@ A user is given 3 chances to guess otherwise, the game is ended.
 public class OLANOS_PRELIMEX_01A {
 
    Scanner scanner = new Scanner(System.in);
+   private String name;
    private int randomInt;
    private int attempts;
    private int maxAttempts = 3;
@@ -63,6 +64,7 @@ public class OLANOS_PRELIMEX_01A {
       nameInput.setBounds(130, 100, 230, 30);
       JButton submitNameButton = new JButton("Submit Name");
       submitNameButton.setBounds(170, 150, 150, 30);
+      
 
       enterNameFrame.add(nameLabel);
       enterNameFrame.add(nameInput);
@@ -75,80 +77,122 @@ public class OLANOS_PRELIMEX_01A {
 
       submitNameButton.addActionListener(new ActionListener() {
          public void actionPerformed(ActionEvent e) {
-            String name = nameInput.getText();
+            name = nameInput.getText();
             if(name == null || name.trim().isEmpty()){
                JOptionPane.showMessageDialog(null, "Please, enter your name.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                //closes the enter name frame for the transition for the new frame
                enterNameFrame.dispose();
 
-               //create a new frame for guessing demo
-               JFrame guessingGameFrame = new JFrame("Number Guessing Game");
-               
-               guessingGameFrame.setLayout(null);
+               guessingGame();
 
-               JLabel guessLabel = new JLabel("Enter a number (1-10): ");
-               guessLabel.setFont(new Font("Arial", Font.BOLD, 20));
-               guessLabel.setBounds(130, 30, 300, 50);
-               
-               JTextField guessInput = new JTextField();
-               guessInput.setFont(new Font("Arial", 15, 15));
-               guessInput.setBounds(130, 80, 230, 30);
-
-               JButton submitIntButton = new JButton("Submit Guess");
-               submitIntButton.setBounds(170, 180, 150, 30);
-
-               JLabel feedbackLabel = new JLabel("You have 3 attempts to make.");
-               feedbackLabel.setFont(new Font("Arial", 15, 15));
-               feedbackLabel.setBounds(130, 110, 500, 30);
-
-               guessingGameFrame.add(guessLabel);
-               guessingGameFrame.add(guessInput);
-               guessingGameFrame.add(submitIntButton);
-               guessingGameFrame.add(feedbackLabel);
-
-               guessingGameFrame.setSize(500, 300);
-               guessingGameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-               guessingGameFrame.setLocationRelativeTo(null);
-               guessingGameFrame.setVisible(true);
-
-               submitIntButton.addActionListener(new ActionListener() {
-                  @Override
-                  public void actionPerformed(ActionEvent e) {
-                     String guessText = guessInput.getText();
-
-                     // handles the cases whether the user's entered integer matches with the random integer generated
-                     try {
-                        int guess = Integer.parseInt(guessText);
-
-                        if (guess < 0 || guess > 10) {
-                           feedbackLabel.setText("Please enter a number between 0 and 10.");
-                        } else {
-                           attempts++;
-                           guessInput.setText("");
-                           if (guess == randomInt) {
-                              feedbackLabel.setText("Congratulations, " + name + "! You guessed it right.");
-                              guessInput.setEnabled(false);
-                              submitIntButton.setEnabled(false);
-                           } else {
-                              if (attempts < maxAttempts) {
-                                 feedbackLabel.setText("Incorrect! " + (maxAttempts - attempts) + " attempts remaining.");
-                              } else {
-                                 feedbackLabel.setText("Game over! The correct number was " + randomInt + ".");
-                                 guessInput.setEnabled(false);
-                                 submitIntButton.setEnabled(false);
-                              }
-                           }
-                        }
-                     } catch (NumberFormatException ex) {
-                        feedbackLabel.setText("Invalid input! Please enter a valid number.");
-                     }
-                  }//end of actionPerformed 
-               });//end of submitIntButton
             }//end of if-else
          }//end of actionPerformed   
       });//end of submitNameButton
+
+      
    }//end of enterName
+
+   public void guessingGame(){
+      //create a new frame for guessing demo
+      JFrame guessingGameFrame = new JFrame("Number Guessing Game");
+               
+      guessingGameFrame.setLayout(null);
+
+      JLabel guessLabel = new JLabel("Enter a number (1-10): ");
+      guessLabel.setFont(new Font("Arial", Font.BOLD, 20));
+      guessLabel.setBounds(130, 30, 300, 50);
+               
+      JTextField guessInput = new JTextField();
+      guessInput.setFont(new Font("Arial", 15, 15));
+      guessInput.setBounds(130, 80, 230, 30);
+
+      JButton submitIntButton = new JButton("Submit Guess");
+      submitIntButton.setBounds(170, 180, 150, 30);
+
+      JLabel feedbackLabel = new JLabel("You have 3 attempts to make.");
+      feedbackLabel.setFont(new Font("Arial", 15, 15));
+      feedbackLabel.setBounds(130, 110, 500, 30);
+
+      JButton restartGameButton = new JButton("Restart Game");
+      restartGameButton.setBounds(170, 220, 150, 30);
+      restartGameButton.setEnabled(false);
+
+      guessingGameFrame.add(guessLabel);
+      guessingGameFrame.add(guessInput);
+      guessingGameFrame.add(submitIntButton);
+      guessingGameFrame.add(feedbackLabel);
+      guessingGameFrame.add(restartGameButton);
+
+      guessingGameFrame.setSize(500, 350);
+      guessingGameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      guessingGameFrame.setLocationRelativeTo(null);
+      guessingGameFrame.setVisible(true);
+
+      submitIntButton.addActionListener(new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+
+            restartGameButton.setEnabled(true);
+            String guessText = guessInput.getText();
+
+            // handles the cases whether the user's entered integer matches with the random integer generated
+            try {
+               int guess = Integer.parseInt(guessText);
+
+               if (guess < 0 || guess > 10) {
+                  feedbackLabel.setText("Please enter a number between 0 and 10.");
+               } else {
+                  attempts++;
+                  guessInput.setText("");
+                  if (guess == randomInt) {
+                     feedbackLabel.setText("Congratulations, " + name + "! You guessed it right.");
+                     guessInput.setEnabled(false);
+                     submitIntButton.setEnabled(false);
+                     return;
+                  } else {
+                     if (attempts < maxAttempts) {
+                        feedbackLabel.setText("Incorrect! " + (maxAttempts - attempts) + " attempts remaining.");
+                     } else {
+                        feedbackLabel.setText("Game over! The correct number was " + randomInt + ".");
+                        guessInput.setEnabled(false);
+                        submitIntButton.setEnabled(false);
+                     }
+                  }
+               }//end of if(guess < 0 || guess > 10)
+
+               // Check if attempts are exhausted
+               if (attempts >= maxAttempts) {
+                  feedbackLabel.setText("Game over! The correct number was: " + randomInt);
+                  guessInput.setEnabled(false);
+                  submitIntButton.setEnabled(false);
+               } else {
+                  // Ask the user if they want to guess again
+                  int choice = JOptionPane.showConfirmDialog(
+                     guessingGameFrame,
+                     "Do you want to guess again? You have " + (maxAttempts - attempts) + " attempt(s) left.",
+                     "Another Guess?",
+                     JOptionPane.YES_NO_OPTION
+                  );
+
+                  if (choice == JOptionPane.NO_OPTION) {
+                     feedbackLabel.setText("Game over! The correct number was: " + randomInt);
+                     guessInput.setEnabled(false);
+                     submitIntButton.setEnabled(false);
+                  }
+               }//end of if-else (attempts >= masAttempts)
+            } catch (NumberFormatException ex) {
+               feedbackLabel.setText("Invalid input! Please enter a valid number.");
+            }//end of try-catch
+         }//end of actionPerformed 
+      });//end of submitIntButton
+
+      restartGameButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            restartGame(guessingGameFrame);
+         }   
+      });//end of restartGameButton
+   }//end of guessingGame method
 
    /**
     * generateRandomInteger() method
@@ -160,4 +204,21 @@ public class OLANOS_PRELIMEX_01A {
       randomInt = random.nextInt(10);
       return randomInt;
    } //end of generateRandomInteger
+
+   /**
+    * restartGame() method
+    *Handles how the frame restarts when the Restart Game button is clicked
+    * @param guessingGameFrame
+    */
+   private void restartGame(JFrame guessingGameFrame) {
+      guessingGameFrame.dispose(); // Close the current game frame
+
+      // Reset game variables
+      attempts = 0;
+      randomInt = generateRandomInteger();
+
+      // Show the name input frame again
+      guessingGame();
+   }//end og restartGame method
+
 } //end of class
